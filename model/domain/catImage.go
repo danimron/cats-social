@@ -4,11 +4,10 @@ import (
 	"time"
 )
 
-type User struct {
+type CatImage struct {
 	Id        int
-	Name      string
-	Password  string
-	Email     string
+	CatID     int
+	ImageUrl  string
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	DeletedAt time.Time

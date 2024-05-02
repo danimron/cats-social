@@ -2,8 +2,13 @@ package main
 
 import (
 	"cats_social/app"
+	"cats_social/controller"
+	"cats_social/repository"
+	"cats_social/service"
 	"fmt"
 	"net/http"
+
+	"github.com/go-playground/validator/v10"
 
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/joho/godotenv"
@@ -12,6 +17,7 @@ import (
 
 func main() {
 	err := godotenv.Load(".env")
+	validate := validator.New()
 
 	fmt.Println("Hello, World!")
 
@@ -20,9 +26,12 @@ func main() {
 		fmt.Println(err)
 	}
 
-	db.Close()
+	//cat
+	catRepository := repository.NewCatRepository()
+	catService := service.NewCatService(catRepository, db, validate)
+	catController := controller.NewCatController(catService)
 
-	router := app.NewRouter()
+	router := app.NewRouter(catController)
 	server := http.Server{
 		Addr:    "localhost:8080",
 		Handler: router,
