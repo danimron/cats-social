@@ -26,12 +26,17 @@ func main() {
 		fmt.Println(err)
 	}
 
+	//user
+	userRepository := repository.NewUserRepository()
+	userService := service.NewUserService(userRepository, db, validate)
+	userController := controller.NewUserController(userService)
+
 	//cat
 	catRepository := repository.NewCatRepository()
 	catService := service.NewCatService(catRepository, db, validate)
 	catController := controller.NewCatController(catService)
 
-	router := app.NewRouter(catController)
+	router := app.NewRouter(userController, catController)
 	server := http.Server{
 		Addr:    "localhost:8080",
 		Handler: router,

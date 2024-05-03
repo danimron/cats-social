@@ -7,9 +7,10 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
-func NewRouter(catController controller.CatController) *httprouter.Router {
+func NewRouter(userController controller.UserController, catController controller.CatController) *httprouter.Router {
 	router := httprouter.New()
 
+	router.POST("/v1/user/register", userController.Register)
 	router.POST("/v1/cat", catController.Create)
 	// router.POST("/v1/user/register", func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	// 	printText("Register Route")

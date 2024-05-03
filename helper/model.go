@@ -12,6 +12,14 @@ func ToCategoryResponseCat(cat domain.Cat) web.CatCreateResponse {
 	}
 }
 
+func ToCategoryResponseUser(user domain.User) web.UserResponse {
+	return web.UserResponse{
+		Email: user.Email,
+		Name:  user.Name,
+		// Token: user.Token,
+	}
+}
+
 // func ToCategoryResponsesUser(students []domain.Student) []web.StudentResponse {
 // 	var userResponse []web.StudentResponse
 // 	for _, student := range students {
