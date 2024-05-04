@@ -36,3 +36,13 @@ func (repository *UserRepositoryImpl) Save(ctx context.Context, tx *sql.Tx, user
 	user.Id = insertedId
 	return user, nil
 }
+
+func (repository *UserRepositoryImpl) FindByEmail(ctx context.Context, tx *sql.Tx, email string) (domain.User, error) {
+	var user domain.User
+	sql := "SELECT id, name, email, password, created_at, updated_at FROM users WHERE email=$1"
+	err := tx.QueryRowContext(ctx, sql, email).Scan(&user.Id, &user.Name, &user.Email, &user.Password, &user.CreatedAt, &user.UpdatedAt)
+	if err != nil {
+		return user, errors.New("User not found")
+	}
+	return user, nil
+}

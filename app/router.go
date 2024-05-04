@@ -12,6 +12,7 @@ func NewRouter(userController controller.UserController, catController controlle
 	router := httprouter.New()
 
 	router.POST("/v1/user/register", userController.Register)
+	router.POST("/v1/user/login", userController.Login)
 
 	router.POST("/v1/cat", middleware.VerifyToken(catController.Create))
 	router.GET("/v1/cat", middleware.VerifyToken(catController.FindAll))

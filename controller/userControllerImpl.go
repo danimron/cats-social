@@ -39,3 +39,24 @@ func (controller *UserControllerImpl) Register(w http.ResponseWriter, r *http.Re
 		helper.WriteToResponseBody(w, webResponse)
 	}
 }
+
+func (controller *UserControllerImpl) Login(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	userLoginRequest := web.UserLoginRequest{}
+	helper.ReadFromRequestBody(r, &userLoginRequest)
+	userResponse, err := controller.UserService.Login(r.Context(), userLoginRequest)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Header().Set("Content-Type", "application/json")
+		webResponse := web.WebResponse{
+			Message: err.Error(),
+		}
+		helper.WriteToResponseBody(w, webResponse)
+	} else {
+		w.WriteHeader(http.StatusOK)
+		webResponse := web.WebResponse{
+			Message: "User logged successfully",
+			Data:    userResponse,
+		}
+		helper.WriteToResponseBody(w, webResponse)
+	}
+}

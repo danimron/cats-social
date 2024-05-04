@@ -7,6 +7,7 @@ import (
 
 type UserService interface {
 	Register(ctx context.Context, request web.UserRegisterRequest) (web.UserResponse, error)
+	Login(ctx context.Context, request web.UserLoginRequest) (web.UserResponse, error)
 	// Update(ctx context.Context, request web.CatUpdateRequest) web.CatUpdateResponse
 	// Delete(ctx context.Context, CatId int)
 	// FindAll(ctx context.Context) []web.CatGetResponse

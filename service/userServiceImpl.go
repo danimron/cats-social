@@ -8,7 +8,6 @@ import (
 	"cats_social/repository"
 	"context"
 	"database/sql"
-	"fmt"
 	"os"
 	"time"
 
@@ -42,7 +41,6 @@ func (service *UserServiceImpl) GenerateToken(ctx context.Context, user domain.U
 	}
 	generateToken := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	key := []byte(os.Getenv("JWT_SECRET"))
-	fmt.Println(key)
 	token, err := generateToken.SignedString(key)
 	helper.PanicIfError(err)
 	return token
@@ -73,5 +71,26 @@ func (service *UserServiceImpl) Register(ctx context.Context, request web.UserRe
 	if err != nil {
 		return web.UserResponse{}, err
 	}
+	return helper.ToCategoryResponseUser(user, token), nil
+}
+
+func (service *UserServiceImpl) Login(ctx context.Context, request web.UserLoginRequest) (web.UserResponse, error) {
+	err := service.Validate.Struct(request)
+	if err != nil {
+		return web.UserResponse{}, err
+	}
+	helper.PanicIfError(err)
+	tx, err := service.DB.Begin() // transaction db
+	helper.PanicIfError(err)
+	defer helper.CommitOrRollback(tx)
+	user, err := service.UserRepository.FindByEmail(ctx, tx, request.Email)
+	if err != nil {
+		return web.UserResponse{}, err
+	}
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(request.Password))
+	if err != nil {
+		return web.UserResponse{}, err
+	}
+	token := service.GenerateToken(ctx, user)
 	return helper.ToCategoryResponseUser(user, token), nil
 }
