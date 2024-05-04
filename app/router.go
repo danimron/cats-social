@@ -2,6 +2,7 @@ package app
 
 import (
 	"cats_social/controller"
+	"cats_social/middleware"
 	"fmt"
 
 	"github.com/julienschmidt/httprouter"
@@ -12,10 +13,10 @@ func NewRouter(userController controller.UserController, catController controlle
 
 	router.POST("/v1/user/register", userController.Register)
 
-	router.POST("/v1/cat", catController.Create)
-	router.GET("/v1/cat", catController.FindAll)
-	router.DELETE("/v1/cat/:cat_id", catController.Delete)
-	router.PUT("/v1/cat/:cat_id", catController.Update)
+	router.POST("/v1/cat", middleware.VerifyToken(catController.Create))
+	router.GET("/v1/cat", middleware.VerifyToken(catController.FindAll))
+	router.DELETE("/v1/cat/:cat_id", middleware.VerifyToken(catController.Delete))
+	router.PUT("/v1/cat/:cat_id", middleware.VerifyToken(catController.Update))
 	// router.POST("/v1/user/register", func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	// 	printText("Register Route")
 	// })

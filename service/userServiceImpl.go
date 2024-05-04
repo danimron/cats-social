@@ -1,14 +1,19 @@
 package service
 
 import (
+	"cats_social/config"
 	"cats_social/helper"
 	"cats_social/model/domain"
 	"cats_social/model/web"
 	"cats_social/repository"
 	"context"
 	"database/sql"
+	"fmt"
+	"os"
+	"time"
 
 	"github.com/go-playground/validator/v10"
+	"github.com/golang-jwt/jwt/v4"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -26,22 +31,23 @@ func NewUserService(userRepository repository.UserRepository, DB *sql.DB, valida
 	}
 }
 
-// func (service *UserServiceImpl) GenerateToken(ctx context.Context, student domain.User) string {
-// 	expTime := time.Now().Add(time.Minute * 2)
-// 	claims := &config.JWTClaim{
-// 		Name:      student.Name,
-// 		StudentId: student.StudentId,
-// 		RegisteredClaims: jwt.RegisteredClaims{
-// 			ExpiresAt: jwt.NewNumericDate(expTime),
-// 		},
-// 	}
-// 	generateToken := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-// 	key := []byte(os.Getenv("JWT_KEY"))
-// 	token, err := generateToken.SignedString(key)
-// 	helper.PanicIfError(err)
-// 	return token
-// 	// set cookie
-// }
+func (service *UserServiceImpl) GenerateToken(ctx context.Context, user domain.User) string {
+	expTime := time.Now().Add(time.Hour * 8)
+	claims := &config.JWTClaim{
+		Name:   user.Name,
+		UserId: user.Id,
+		RegisteredClaims: jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(expTime),
+		},
+	}
+	generateToken := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	key := []byte(os.Getenv("JWT_SECRET"))
+	fmt.Println(key)
+	token, err := generateToken.SignedString(key)
+	helper.PanicIfError(err)
+	return token
+	// set cookie
+}
 
 func (service *UserServiceImpl) Register(ctx context.Context, request web.UserRegisterRequest) (web.UserResponse, error) {
 	err := service.Validate.Struct(request)
@@ -63,8 +69,9 @@ func (service *UserServiceImpl) Register(ctx context.Context, request web.UserRe
 		Name:     request.Name,
 	}
 	user, err = service.UserRepository.Save(ctx, tx, user)
+	token := service.GenerateToken(ctx, user)
 	if err != nil {
 		return web.UserResponse{}, err
 	}
-	return helper.ToCategoryResponseUser(user), nil
+	return helper.ToCategoryResponseUser(user, token), nil
 }

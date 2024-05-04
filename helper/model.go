@@ -5,11 +5,11 @@ import (
 	"cats_social/model/web"
 )
 
-func ToCategoryResponseUser(user domain.User) web.UserResponse {
+func ToCategoryResponseUser(user domain.User, token string) web.UserResponse {
 	return web.UserResponse{
 		Email: user.Email,
 		Name:  user.Name,
-		// Token: user.Token,
+		Token: token,
 	}
 }
 
