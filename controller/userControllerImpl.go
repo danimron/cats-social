@@ -31,6 +31,7 @@ func (controller *UserControllerImpl) Register(w http.ResponseWriter, r *http.Re
 		}
 		helper.WriteToResponseBody(w, webResponse)
 	} else {
+		w.WriteHeader(http.StatusCreated)
 		webResponse := web.WebResponse{
 			Message: "User registered successfully",
 			Data:    userResponse,
