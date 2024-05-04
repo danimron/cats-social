@@ -11,24 +11,16 @@ func NewRouter(userController controller.UserController, catController controlle
 	router := httprouter.New()
 
 	router.POST("/v1/user/register", userController.Register)
+
 	router.POST("/v1/cat", catController.Create)
+	router.GET("/v1/cat", catController.FindAll)
+	router.DELETE("/v1/cat/:cat_id", catController.Delete)
+	router.PUT("/v1/cat/:cat_id", catController.Update)
 	// router.POST("/v1/user/register", func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	// 	printText("Register Route")
 	// })
 	// router.POST("/v1/user/login", func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	// 	printText("Login Route")
-	// })
-	// router.POST("/v1/cat", func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	// 	printText("Create Cat Route")
-	// })
-	// router.GET("/v1/cat", func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	// 	printText("Get Cat Route")
-	// })
-	// router.PUT("/v1/cat/:id", func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	// 	printText("Update Cat Route")
-	// })
-	// router.DELETE("/v1/cat/:id", func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	// 	printText("Delete Cat Route")
 	// })
 	// router.POST("/v1/cat/match", func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	// 	printText("Match Cat Route")

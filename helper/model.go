@@ -5,18 +5,39 @@ import (
 	"cats_social/model/web"
 )
 
+func ToCategoryResponseUser(user domain.User) web.UserResponse {
+	return web.UserResponse{
+		Email: user.Email,
+		Name:  user.Name,
+		// Token: user.Token,
+	}
+}
+
 func ToCategoryResponseCat(cat domain.Cat) web.CatCreateResponse {
 	return web.CatCreateResponse{
 		CatId:     cat.Id,
 		CreatedAt: cat.CreatedAt,
 	}
 }
+func ToCategoryResponseCats(cats []domain.Cat) []web.CatGetResponse {
+	var catResponse []web.CatGetResponse
+	for _, cat := range cats {
+		catResponse = append(catResponse, ToCategoryCat(cat))
+	}
+	return catResponse
+}
 
-func ToCategoryResponseUser(user domain.User) web.UserResponse {
-	return web.UserResponse{
-		Email: user.Email,
-		Name:  user.Name,
-		// Token: user.Token,
+func ToCategoryCat(cat domain.Cat) web.CatGetResponse {
+	return web.CatGetResponse{
+		Id:         cat.Id,
+		Name:       cat.Name,
+		Race:       cat.Race,
+		Sex:        cat.Sex,
+		AgeInMonth: cat.AgeInMonth,
+		// ImageUrls: cat.ImageUrls,
+		Description: cat.Description,
+		// HasMatched: cat.HasMatched,
+		CreatedAt: cat.CreatedAt,
 	}
 }
 
