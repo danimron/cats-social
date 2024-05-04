@@ -22,10 +22,19 @@ func NewUserController(userService service.UserService) UserController {
 func (controller *UserControllerImpl) Register(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	userCreateRequest := web.UserRegisterRequest{}
 	helper.ReadFromRequestBody(r, &userCreateRequest)
-	userResponse := controller.UserService.Register(r.Context(), userCreateRequest)
-	webResponse := web.WebResponse{
-		Message: "a",
-		Data:    userResponse,
+	userResponse, err := controller.UserService.Register(r.Context(), userCreateRequest)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Header().Set("Content-Type", "application/json")
+		webResponse := web.WebResponse{
+			Message: err.Error(),
+		}
+		helper.WriteToResponseBody(w, webResponse)
+	} else {
+		webResponse := web.WebResponse{
+			Message: "User registered successfully",
+			Data:    userResponse,
+		}
+		helper.WriteToResponseBody(w, webResponse)
 	}
-	helper.WriteToResponseBody(w, webResponse)
 }

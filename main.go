@@ -3,6 +3,7 @@ package main
 import (
 	"cats_social/app"
 	"cats_social/controller"
+	"cats_social/exception"
 	"cats_social/repository"
 	"cats_social/service"
 	"fmt"
@@ -37,6 +38,7 @@ func main() {
 	catController := controller.NewCatController(catService)
 
 	router := app.NewRouter(userController, catController)
+	router.PanicHandler = exception.ErrorHandler
 	server := http.Server{
 		Addr:    "localhost:8080",
 		Handler: router,
